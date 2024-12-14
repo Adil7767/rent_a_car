@@ -1,42 +1,42 @@
-'use client'
+"use client";
 
-import { useRouter } from 'next/navigation'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { useForm } from 'react-hook-form'
-import * as z from 'zod'
-import { Button } from '@/components/ui/button'
+import { useRouter } from "next/navigation";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import * as z from "zod";
+import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
   FormField,
   FormItem,
   FormLabel,
-} from '@/components/ui/form'
-import { Input } from '@/components/ui/input'
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
-import { Checkbox } from '@/components/ui/checkbox'
-import { Card, CardContent } from '@/components/ui/card'
-import CarServices from '@/services/carServices'
-import { useState } from 'react'
+} from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Card, CardContent } from "@/components/ui/card";
+import CarServices from "@/services/carServices";
+import { useState } from "react";
 
 const formSchema = z.object({
-  registrationNo: z.string().min(1, 'Registration number is required'),
-  yearOfModel: z.string().min(1, 'Year of model is required'),
-  registeredCity: z.string().min(1, 'Registered city is required'),
-  carType: z.string().min(1, 'Car type is required'),
-  carMake: z.string().min(1, 'Car make is required'),
-  carModel: z.string().min(1, 'Car model is required'),
+  registrationNo: z.string().min(1, "Registration number is required"),
+  yearOfModel: z.string().min(1, "Year of model is required"),
+  registeredCity: z.string().min(1, "Registered city is required"),
+  carType: z.string().min(1, "Car type is required"),
+  carMake: z.string().min(1, "Car make is required"),
+  carModel: z.string().min(1, "Car model is required"),
   color: z.string(),
   transmissionType: z.string(),
-  engineCapacity: z.string().min(1, 'Engine capacity is required'),
-  chassisNo: z.string().min(1, 'Chassis number is required'),
-  engineNo: z.string().min(1, 'Engine number is required'),
+  engineCapacity: z.string().min(1, "Engine capacity is required"),
+  chassisNo: z.string().min(1, "Chassis number is required"),
+  engineNo: z.string().min(1, "Engine number is required"),
   fuelType: z.string(),
   fuelTankCapacity: z.string(),
   maxSpeed: z.string(),
@@ -44,8 +44,8 @@ const formSchema = z.object({
   inspectionDate: z.string(),
   inspectionMileage: z.string(),
   inspectionLocation: z.string(),
-  ratePerDay: z.coerce.number().min(0, 'Rate per day must be positive'),
-  priceOfVehicle: z.coerce.number().min(0, 'Price of vehicle must be positive'),
+  ratePerDay: z.coerce.number().min(0, "Rate per day must be positive"),
+  priceOfVehicle: z.coerce.number().min(0, "Price of vehicle must be positive"),
   fuelAverage: z.string(),
   features: z.object({
     airConditioner: z.boolean(),
@@ -67,10 +67,10 @@ const formSchema = z.object({
     vehicleDocuments: z.boolean(),
   }),
   images: z.array(z.string()).default([]),
-})
+});
 
 export function AddCarForm() {
-  const router = useRouter()
+  const router = useRouter();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -116,31 +116,31 @@ export function AddCarForm() {
       },
       images: [],
     },
-  })
+  });
 
   const [images, setImages] = useState<File[]>([]);
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    const formData = new FormData()
+    const formData = new FormData();
 
     Object.entries(values).forEach(([key, value]) => {
       if (key !== "features" && key !== "images") {
-        formData.append(key, value.toString())
+        formData.append(key, value.toString());
       }
-    })
+    });
 
-    formData.append("features", JSON.stringify(values.features))
+    formData.append("features", JSON.stringify(values.features));
 
-    images.forEach((image, index) => {
-      formData.append(`images`, image)
-    })
+    images.forEach((image) => {
+      formData.append(`images`, image);
+    });
 
     try {
-      await CarServices.uploadCar(formData)
-      router.push("/")
-      router.refresh()
+      await CarServices.uploadCar(formData);
+      router.push("/");
+      router.refresh();
     } catch (error) {
-      console.error("Error uploading car:", error)
+      console.error("Error uploading car:", error);
       // Handle error (e.g., show error message to user)
     }
   }
@@ -152,7 +152,9 @@ export function AddCarForm() {
           <CardContent className="p-6">
             <div className="space-y-6">
               <div className="space-y-4">
-                <h2 className="text-xl font-semibold text-blue-600">Vehicle Information</h2>
+                <h2 className="text-xl font-semibold text-blue-600">
+                  Vehicle Information
+                </h2>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <FormField
                     control={form.control}
@@ -161,7 +163,10 @@ export function AddCarForm() {
                       <FormItem>
                         <FormLabel>Registration No</FormLabel>
                         <FormControl>
-                          <Input placeholder="Enter registration number" {...field} />
+                          <Input
+                            placeholder="Enter registration number"
+                            {...field}
+                          />
                         </FormControl>
                       </FormItem>
                     )}
@@ -173,7 +178,11 @@ export function AddCarForm() {
                       <FormItem>
                         <FormLabel>Year of Model</FormLabel>
                         <FormControl>
-                          <Input type="number" placeholder="Enter year" {...field} />
+                          <Input
+                            type="number"
+                            placeholder="Enter year"
+                            {...field}
+                          />
                         </FormControl>
                       </FormItem>
                     )}
@@ -196,7 +205,10 @@ export function AddCarForm() {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Car Type</FormLabel>
-                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                        >
                           <FormControl>
                             <SelectTrigger>
                               <SelectValue placeholder="Select Car Type" />
@@ -217,7 +229,10 @@ export function AddCarForm() {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Car Make</FormLabel>
-                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                        >
                           <FormControl>
                             <SelectTrigger>
                               <SelectValue placeholder="Select Car Make" />
@@ -262,7 +277,10 @@ export function AddCarForm() {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Transmission Type</FormLabel>
-                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                        >
                           <FormControl>
                             <SelectTrigger>
                               <SelectValue placeholder="Select" />
@@ -283,7 +301,10 @@ export function AddCarForm() {
                       <FormItem>
                         <FormLabel>Engine Capacity</FormLabel>
                         <FormControl>
-                          <Input placeholder="Enter engine capacity" {...field} />
+                          <Input
+                            placeholder="Enter engine capacity"
+                            {...field}
+                          />
                         </FormControl>
                       </FormItem>
                     )}
@@ -295,7 +316,10 @@ export function AddCarForm() {
                       <FormItem>
                         <FormLabel>Chassis No</FormLabel>
                         <FormControl>
-                          <Input placeholder="Enter chassis number" {...field} />
+                          <Input
+                            placeholder="Enter chassis number"
+                            {...field}
+                          />
                         </FormControl>
                       </FormItem>
                     )}
@@ -316,7 +340,9 @@ export function AddCarForm() {
               </div>
 
               <div className="space-y-4">
-                <h2 className="text-xl font-semibold text-blue-600">Vehicle Details</h2>
+                <h2 className="text-xl font-semibold text-blue-600">
+                  Vehicle Details
+                </h2>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <FormField
                     control={form.control}
@@ -324,7 +350,10 @@ export function AddCarForm() {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Fuel Type</FormLabel>
-                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                        >
                           <FormControl>
                             <SelectTrigger>
                               <SelectValue placeholder="Select Fuel Type" />
@@ -370,7 +399,11 @@ export function AddCarForm() {
                       <FormItem>
                         <FormLabel>Seating Capacity</FormLabel>
                         <FormControl>
-                          <Input type="number" placeholder="Enter seating capacity" {...field} />
+                          <Input
+                            type="number"
+                            placeholder="Enter seating capacity"
+                            {...field}
+                          />
                         </FormControl>
                       </FormItem>
                     )}
@@ -418,7 +451,11 @@ export function AddCarForm() {
                       <FormItem>
                         <FormLabel>Rate per Day</FormLabel>
                         <FormControl>
-                          <Input type="number" placeholder="Enter daily rate" {...field} />
+                          <Input
+                            type="number"
+                            placeholder="Enter daily rate"
+                            {...field}
+                          />
                         </FormControl>
                       </FormItem>
                     )}
@@ -430,7 +467,11 @@ export function AddCarForm() {
                       <FormItem>
                         <FormLabel>Price of Vehicle</FormLabel>
                         <FormControl>
-                          <Input type="number" placeholder="Enter vehicle price" {...field} />
+                          <Input
+                            type="number"
+                            placeholder="Enter vehicle price"
+                            {...field}
+                          />
                         </FormControl>
                       </FormItem>
                     )}
@@ -451,7 +492,9 @@ export function AddCarForm() {
               </div>
 
               <div className="space-y-4">
-                <h2 className="text-xl font-semibold text-blue-600">Features</h2>
+                <h2 className="text-xl font-semibold text-blue-600">
+                  Features
+                </h2>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                   {Object.keys(form.getValues().features).map((feature) => (
                     <FormField
@@ -467,7 +510,7 @@ export function AddCarForm() {
                             />
                           </FormControl>
                           <FormLabel className="!mt-0 capitalize">
-                            {feature.replace(/([A-Z])/g, ' $1').trim()}
+                            {feature.replace(/([A-Z])/g, " $1").trim()}
                           </FormLabel>
                         </FormItem>
                       )}
@@ -487,23 +530,37 @@ export function AddCarForm() {
                       const files = Array.from(e.target.files || []);
                       const newImages = [...images, ...files].slice(0, 10); // Limit to 10 images
                       setImages(newImages);
-                      form.setValue("images", newImages.map(file => URL.createObjectURL(file)));
+                      form.setValue(
+                        "images",
+                        newImages.map((file) => URL.createObjectURL(file))
+                      );
                     }}
                   />
-                  <p className="text-sm text-gray-500">Maximum 10 images allowed</p>
+                  <p className="text-sm text-gray-500">
+                    Maximum 10 images allowed
+                  </p>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                     {images.map((image, index) => (
                       <div key={index} className="relative">
-                        <img src={URL.createObjectURL(image)} alt={`Car Image ${index + 1}`} className="w-full h-32 object-cover rounded" />
+                        <img
+                          src={URL.createObjectURL(image)}
+                          alt={`Car Image ${index + 1}`}
+                          className="w-full h-32 object-cover rounded"
+                        />
                         <Button
                           type="button"
                           variant="destructive"
                           size="sm"
                           className="absolute top-1 right-1"
                           onClick={() => {
-                            const newImages = images.filter((_, i) => i !== index);
+                            const newImages = images.filter(
+                              (_, i) => i !== index
+                            );
                             setImages(newImages);
-                            form.setValue("images", newImages.map(file => URL.createObjectURL(file)));
+                            form.setValue(
+                              "images",
+                              newImages.map((file) => URL.createObjectURL(file))
+                            );
                           }}
                         >
                           Remove
@@ -524,6 +581,5 @@ export function AddCarForm() {
         </div>
       </form>
     </Form>
-  )
+  );
 }
-
