@@ -10,13 +10,9 @@ export function CarGrid() {
   const [cars, setCars] = useState<any>([]);
   useEffect(() => {
     try {
-      CarServices.getAllCars()
-        .then((res: any) => {
-          setCars(res.data);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+      CarServices.getAllCars().then((res: any) => {
+        setCars(res);
+      });
     } catch (error) {
       console.log(error);
     }
